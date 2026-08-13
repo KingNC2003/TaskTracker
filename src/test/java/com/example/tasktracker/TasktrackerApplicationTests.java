@@ -1,4 +1,4 @@
-package com.example.tasktracker;
+package com.project.tasktracker;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
