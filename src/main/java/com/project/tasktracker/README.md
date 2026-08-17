@@ -107,7 +107,6 @@ Linux/macOS:
 export OPENWEATHER_API_KEY='your_api_key_here'
 
 
-
 ### 2. Run the application
 
 Linux/macOS:
