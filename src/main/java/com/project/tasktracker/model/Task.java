@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 // Task model
 public class Task {
     private Long id;
+    private String createdAt;
 
     @NotBlank(message = "Title is required")
     private String title;
@@ -27,6 +28,10 @@ public class Task {
     public Long getId(){
         return id;
     };
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
 
     public String getTitle(){
         return title;
@@ -52,6 +57,10 @@ public class Task {
     public void setId(Long id){
         this.id = id;
     };
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
 
     public void setTitle(String title){
         this.title = title;

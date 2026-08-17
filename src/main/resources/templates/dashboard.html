@@ -18,6 +18,40 @@
         </div>
 
         <a class="button" th:href="@{/tasks/new}">Create Task</a>
+        <form th:action="@{/logout}" method="post">
+            <button class="button button-secondary" type="submit">
+                Logout
+            </button>
+        </form>
+    </div>
+
+    <div class="weather-card"
+        th:if="${weather != null}">
+
+        <h2>Current Weather</h2>
+
+        <p>
+            <strong>Location:</strong>
+            <span th:text="${weather.name}"></span>
+        </p>
+
+        <p>
+            <strong>Temperature:</strong>
+            <span th:text="${weather.main.temp}"></span> °F
+        </p>
+
+        <p th:if="${weather.weather != null and !weather.weather.isEmpty()}">
+            <strong>Conditions:</strong>
+            <span th:text="${weather.weather[0].description}"></span>
+        </p>
+
+    </div>
+    <div class="weather-card"
+        th:if="${weather == null}">
+
+        <h2>Current Weather</h2>
+        <p>Weather information is currently unavailable.</p>
+
     </div>
     
     <form class="filter-form"
@@ -91,12 +125,16 @@
         </a>
     </form>
 
+    <div class="alert alert-success"
+     th:if="${successMessage}"
+     th:text="${successMessage}">
+    </div>
+
     <div class="empty-state" th:if="${#lists.isEmpty(tasks)}">
         <p>No tasks available.</p>
     </div>
 
     <div class="task-grid">
-
         <article class="task-card"
                  th:each="task : ${tasks}">
 
@@ -110,6 +148,11 @@
                 <p>
                     <strong>Due:</strong>
                     <span th:text="${task.dueDate}"></span>
+                </p>
+
+                <p>
+                    <strong>Created:</strong>
+                    <span th:text="${task.createdAt}"></span>
                 </p>
 
                 <p>
@@ -134,10 +177,39 @@
                         Delete
                     </button>
 
-</form>
+                </form>
             </div>
         </article>
     </div>
+    <nav class="pagination"
+        th:if="${totalPages > 1}">
+        <a class="button button-secondary"
+        th:if="${currentPage > 1}"
+        th:href="@{/tasks(
+                page=${currentPage - 1},
+                search=${search},
+                status=${selectedStatus},
+                priority=${selectedPriority}
+        )}">
+            Previous
+        </a>
+        <span>
+            Page
+            <strong th:text="${currentPage}"></strong>
+            of
+            <strong th:text="${totalPages}"></strong>
+        </span>
+        <a class="button"
+        th:if="${currentPage < totalPages}"
+        th:href="@{/tasks(
+                page=${currentPage + 1},
+                search=${search},
+                status=${selectedStatus},
+                priority=${selectedPriority}
+        )}">
+            Next
+        </a>
+    </nav>
 </main>
 </body>
 </html>

@@ -5,33 +5,56 @@ import com.project.tasktracker.model.TaskStatus;
 import com.project.tasktracker.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import com.project.tasktracker.model.Priority;
+import com.project.tasktracker.exception.TaskNotFoundException;
 
 import java.util.List;
 import java.util.ArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class TaskService{
     private final TaskRepository taskRepository;
+    private final DateTimeService dateTimeService;
 
-    public TaskService(TaskRepository taskRepository){
+    private static final Logger logger = LoggerFactory.getLogger(TaskService.class);
+
+    public TaskService(TaskRepository taskRepository,
+        DateTimeService dateTimeService){
         this.taskRepository = taskRepository;
+        this.dateTimeService = dateTimeService;
     }
 
     public List<Task> getAllTasks(){
         return taskRepository.findAll();
     }
 
-    public Task getTaskById(Long id){
-        return taskRepository.findById(id);
+    public Task getTaskById(Long id) {
+        Task task = taskRepository.findById(id);
+        if (task == null) {
+            throw new TaskNotFoundException(id);
+        }
+        return task;
     }
 
-    public Task createTask(Task task){
+    public Task createTask(Task task) {
         task.setStatus(TaskStatus.PENDING);
-        return taskRepository.save(task);
+        task.setCreatedAt(dateTimeService.getCurrentDateTime());
+
+        Task savedTask = taskRepository.save(task);
+        logger.info(
+                "Task created: id={}, title={}",
+                savedTask.getId(),
+                savedTask.getTitle()
+        );
+        return savedTask;
     }
 
     public Task updateTask(Long id, Task updatedTask) {
+        Task existingTask = getTaskById(id);
         updatedTask.setId(id);
+        updatedTask.setCreatedAt(existingTask.getCreatedAt());
         return taskRepository.update(updatedTask);
     }
 
