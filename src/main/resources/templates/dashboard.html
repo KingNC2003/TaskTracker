@@ -1,9 +1,143 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Task Tracker</title>
-    </head>
-    <body>
-        <h1> Task Tracker</h1>
-    </body>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Task Dashboard</title>
+</head>
+
+<body>
+<main class="container">
+    <div class="page-header">
+        <div>
+            <h1>Task Dashboard</h1>
+            <p class="subtitle">Manage your tasks and deadlines.</p>
+        </div>
+
+        <a class="button" th:href="@{/tasks/new}">Create Task</a>
+    </div>
+    
+    <form class="filter-form"
+        th:action="@{/tasks}"
+        method="get">
+
+        <div class="filter-group">
+            <label for="search">Search</label>
+
+            <input type="text"
+                id="search"
+                name="search"
+                placeholder="Search tasks..."
+                th:value="${search}">
+        </div>
+
+        <div class="filter-group">
+            <label for="status">Status</label>
+
+            <select id="status"
+                    name="status">
+
+                <option value="">All</option>
+
+                <option value="PENDING"
+                        th:selected="${selectedStatus != null and selectedStatus.name() == 'PENDING'}">
+                    Pending
+                </option>
+
+                <option value="COMPLETED"
+                        th:selected="${selectedStatus != null and selectedStatus.name() == 'COMPLETED'}">
+                    Completed
+                </option>
+
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label for="priority">Priority</label>
+
+            <select id="priority"
+                    name="priority">
+
+                <option value="">All</option>
+
+                <option value="LOW"
+                        th:selected="${selectedPriority != null and selectedPriority.name() == 'LOW'}">
+                    Low
+                </option>
+
+                <option value="MEDIUM"
+                        th:selected="${selectedPriority != null and selectedPriority.name() == 'MEDIUM'}">
+                    Medium
+                </option>
+
+                <option value="HIGH"
+                        th:selected="${selectedPriority != null and selectedPriority.name() == 'HIGH'}">
+                    High
+                </option>
+
+            </select>
+        </div>
+        <button class="button"
+                type="submit">
+            Filter
+        </button>
+
+        <a class="button button-secondary"
+        th:href="@{/tasks}">
+            Clear
+        </a>
+    </form>
+
+    <div class="empty-state" th:if="${#lists.isEmpty(tasks)}">
+        <p>No tasks available.</p>
+    </div>
+
+    <div class="task-grid">
+
+        <article class="task-card"
+                 th:each="task : ${tasks}">
+
+            <h2 th:text="${task.title}"></h2>
+
+            <p class="task-description"
+               th:text="${task.description}">
+            </p>
+
+            <div class="task-details">
+                <p>
+                    <strong>Due:</strong>
+                    <span th:text="${task.dueDate}"></span>
+                </p>
+
+                <p>
+                    <strong>Priority:</strong>
+                    <span th:text="${task.priority}"></span>
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span th:text="${task.status}"></span>
+                </p>
+
+                <a class="button"
+                    th:href="@{/tasks/{id}/edit(id=${task.id})}">
+                    Edit
+                </a>
+
+                <form th:action="@{/tasks/{id}/delete(id=${task.id})}"
+                      method="post">
+                    <button class="button button-danger"
+                            type="submit">
+                        Delete
+                    </button>
+
+</form>
+            </div>
+        </article>
+    </div>
+</main>
+</body>
 </html>
